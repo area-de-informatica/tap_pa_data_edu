@@ -49,107 +49,80 @@
                 {{ item.title }}
               </v-expansion-panel-title>
               <v-expansion-panel-text class="card-text">
-                <p v-html="item.description"></p>
-                <p v-if="item.usageContext">{{ item.usageContext }}</p>
+                <!-- Usando los nuevos componentes aquí -->
+                <ContenidoTexto :text="item.description" class-name="mb-4" />
+                <ContenidoTexto v-if="item.usageContext" :text="item.usageContext" class-name="mb-4" />
 
-                <!-- Usos (si existen) -->
-                <v-list v-if="item.usos" dense class="dark-list">
-                  <v-list-item v-for="(uso, index) in item.usos" :key="index">
-                    <v-list-item-icon>
-                      <v-icon color="#00B8D9">mdi-check-circle</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      <v-list-item-title class="card-text">{{ uso }}</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list>
+                <ContenidoListaSimple v-if="item.usos" :items="item.usos" icon="mdi-check-circle" />
 
-                <!-- Tabla de estudiantes (si existe) -->
-                <div v-if="item.estudiantes">
-                  <p class="mt-4">{{ item.exampleIntro }}</p>
-                  <v-simple-table class="elevation-1 mt-2" style="color:#A9D6E5">
-                    <thead>
-                      <tr style="background-color: #112F3C; color: #00B8D9;">
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Grado</th>
-                        <th>Nota Matemáticas</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="est in item.estudiantes" :key="est.id">
-                        <td>{{ est.id }}</td>
-                        <td>{{ est.nombre }}</td>
-                        <td>{{ est.grado }}</td>
-                        <td>{{ est.nota }}</td>
-                      </tr>
-                    </tbody>
-                  </v-simple-table>
-                </div>
+                <ContenidoTabla
+                  v-if="item.estudiantes"
+                  :data="item.estudiantes"
+                  :intro-text="item.exampleIntro"
+                />
 
-                <!-- Lista de tipos, componentes, comandos, modelos, herramientas o ventajas (si existen) -->
-                <ul v-if="item.tipos || item.componentes || item.comandos || item.modelos || item.herramientas || item.ventajas">
-                  <li v-for="(subItem, index) in item.tipos || item.componentes || item.comandos || item.modelos || item.herramientas || item.ventajas" :key="index">
-                    <template v-if="item.tipos">
-                      <strong>{{ subItem.nombre }}:</strong> {{ subItem.detalle }}
-                      <v-tooltip location="top">
-                        <template v-slot:activator="{ props }">
-                          <span v-bind="props" class="tooltip-text">Ejemplo: {{ subItem.ejemplo }}</span>
-                        </template>
-                        <span>Más sobre {{ subItem.nombre }}</span>
-                      </v-tooltip>
-                    </template>
-                    <template v-else-if="item.componentes || item.modelos">
-                      <strong>{{ subItem.nombre }}:</strong> {{ subItem.descripcion }}
-                    </template>
-                    <template v-else-if="item.comandos">
-                      <code>{{ subItem.nombre }}</code>: {{ subItem.funcion }}
-                    </template>
-                    <template v-else>
-                      {{ subItem }}
-                    </template>
-                  </li>
-                </ul>
+                <ContenidoListaDetallada
+                  v-if="item.tipos"
+                  :items="item.tipos"
+                  type="tipos"
+                />
+                <ContenidoListaDetallada
+                  v-else-if="item.componentes"
+                  :items="item.componentes"
+                  type="componentes"
+                />
+                <ContenidoListaDetallada
+                  v-else-if="item.comandos"
+                  :items="item.comandos"
+                  type="comandos"
+                />
+                <ContenidoListaDetallada
+                  v-else-if="item.modelos"
+                  :items="item.modelos"
+                  type="modelos"
+                />
+                <ContenidoListaDetallada
+                  v-else-if="item.herramientas"
+                  :items="item.herramientas"
+                  type="herramientas"
+                />
+                 <ContenidoListaSimple
+                  v-else-if="item.ventajas"
+                  :items="item.ventajas"
+                  icon="mdi-check-circle"
+                />
+                <ContenidoListaSimple
+                  v-else-if="item.desafios"
+                  :items="item.desafios"
+                  icon="mdi-alert-circle-outline"
+                  icon-color="#FFC107"
+                />
+                <ContenidoListaSimple
+                  v-else-if="item.tendencias"
+                  :items="item.tendencias"
+                  icon="mdi-trending-up"
+                  icon-color="#4CAF50"
+                />
 
-                <!-- Comparación, integridad, seguridad o información adicional (si existen) -->
-                <p v-if="item.comparison">{{ item.comparison }}</p>
-                <p v-if="item.integrity">{{ item.integrity }}</p>
-                <p v-if="item.security">{{ item.security }}</p>
-                <p v-if="item.additionalInfo">{{ item.additionalInfo }}</p>
 
-                <!-- Ejemplo JSON (si existe) -->
-                <div v-if="item.jsonExample">
-                  <p>{{ item.exampleIntro }}</p>
-                  <pre style="background:#112F3C; padding:1rem; border-radius:8px; color:#00B8D9;">
-{{ item.jsonExample }}
-                  </pre>
-                </div>
+                <ContenidoTexto v-if="item.comparison" :text="item.comparison" class-name="mb-4" />
+                <ContenidoTexto v-if="item.integrity" :text="item.integrity" class-name="mb-4" />
+                <ContenidoTexto v-if="item.security" :text="item.security" class-name="mb-4" />
+                <ContenidoTexto v-if="item.additionalInfo" :text="item.additionalInfo" class-name="mb-4" />
 
-                <!-- Casos de uso (si existen) -->
-                <div v-if="item.casos">
-                  <p class="mt-4">{{ item.casosIntro }}</p>
-                  <v-row>
-                    <v-col v-for="(caso, index) in item.casos" :key="index" cols="12" sm="6">
-                      <v-card class="card-secondary pa-4">
-                        <v-card-text class="card-text">
-                          <strong>{{ caso.titulo }}:</strong> {{ caso.descripcion }}
-                        </v-card-text>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </div>
+                <ContenidoJson
+                  v-if="item.jsonExample"
+                  :json-string="item.jsonExample"
+                  :intro-text="item.exampleIntro"
+                />
 
-                <!-- Consejos prácticos (si existen) -->
-                <v-list v-if="item.consejos" dense class="dark-list">
-                  <v-list-item v-for="(consejo, index) in item.consejos" :key="index">
-                    <v-list-item-icon>
-                      <v-icon color="#00B8D9">mdi-lightbulb-on</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      <v-list-item-title class="card-text">{{ consejo }}</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list>
+                <ContenidoCasos
+                  v-if="item.casos"
+                  :casos="item.casos"
+                  :intro-text="item.casosIntro"
+                />
+
+                <ContenidoListaSimple v-if="item.consejos" :items="item.consejos" icon="mdi-lightbulb-on" />
               </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
@@ -177,13 +150,22 @@
 import { onMounted, computed, ref } from 'vue'
 import { useContenidoStore } from '~/stores/contenido'
 
+// Importar los nuevos componentes
+import ContenidoTexto from '~/components/ContenidoTexto.vue';
+import ContenidoListaSimple from '~/components/ContenidoListaSimple.vue';
+import ContenidoTabla from '~/components/ContenidoTabla.vue';
+import ContenidoListaDetallada from '~/components/ContenidoListaDetallada.vue';
+import ContenidoJson from '~/components/ContenidoJson.vue';
+import ContenidoCasos from '~/components/ContenidoCasos.vue';
+
+
 const contenidoStore = useContenidoStore()
 const contenidoItems = computed(() => contenidoStore.contenidoItems)
 const loading = ref(true)
 const error = ref(false)
 const expandedPanels = ref(new Set())
 const totalPanels = ref(0)
-const activePanels = ref([])
+const activePanels = ref([]) // Controla qué paneles están abiertos
 
 const readProgress = computed(() => {
   const expandedCount = expandedPanels.value.size
@@ -224,11 +206,14 @@ onMounted(async () => {
   font-size: 2.8rem;
   color: #00B8D9;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  text-align: center; /* Centrar el título */
 }
 .description {
   font-size: 1.1rem;
   color: #B0D7DE;
+  text-align: center; /* Centrar la descripción */
 }
+/* Estos estilos ahora se heredan por los componentes hijos o se duplican en ellos si son `scoped` */
 .dark-list {
   background-color: transparent !important;
   color: #B0D7DE !important;
@@ -260,13 +245,11 @@ onMounted(async () => {
 }
 .card-title {
   font-weight: 600;
-  margin-bottom: 1rem;
   color: #00B8D9;
 }
 .card-text {
   color: #B0D7DE;
   font-size: 0.95rem;
-  margin-bottom: 1.5rem;
 }
 .btn-primary {
   background-color: #00B8D9 !important;
@@ -294,6 +277,7 @@ onMounted(async () => {
 .progress-text {
   color: #ff0000;
   font-size: 0.9rem;
+  margin-left: 10px; /* Espacio para el texto de progreso */
 }
 .fade-in {
   opacity: 0;

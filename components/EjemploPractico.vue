@@ -1,89 +1,226 @@
 <template>
-  <v-card class="ejemplo-card pa-6 mb-6" elevation="10">
-    <v-card-title class="card-title">
+  <v-card 
+    class="ejemplo-card ma-2" 
+    elevation="8"
+    :class="{ 'completado': completado }"
+    @click="handleCardClick" 
+  >
+    <v-img
+      :src="imagen"
+      height="180"
+      cover
+      class="ejemplo-imagen"
+    >
+      <div class="overlay-gradient"></div>
+      <v-chip
+        :color="getCategoriaColor(categoria)"
+        size="small"
+        class="categoria-chip"
+      >
+        {{ categoria }}
+      </v-chip>
+    </v-img>
+
+    <v-card-title class="ejemplo-titulo">
       {{ titulo }}
+      <v-icon 
+        v-if="completado" 
+        color="success" 
+        class="ml-2"
+      >
+        mdi-check-circle
+      </v-icon>
     </v-card-title>
 
-    <v-card-subtitle class="card-subtitle">
-      {{ descripcion }}
+    <v-card-subtitle class="ejemplo-duracion">
+      <v-icon size="small" class="mr-1">mdi-clock-outline</v-icon>
+      {{ duracion }}
     </v-card-subtitle>
 
-    <v-card-text>
-      <h3 class="pasos-title">Pasos a seguir:</h3>
-      <v-list dense class="custom-list">
-        <v-list-item v-for="(paso, index) in pasos" :key="index" class="list-item">
-          <v-list-item-content>
-            <v-list-item-title>{{ index + 1 }}. {{ paso }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-      <v-img :src="imagen" height="200" cover class="mt-4 rounded-lg"></v-img>
+    <v-card-text class="ejemplo-descripcion">
+      {{ descripcion }}
     </v-card-text>
+
+    <v-expansion-panels v-if="mostrarPasos" variant="accordion" class="mx-4 mb-4">
+      <v-expansion-panel>
+        <v-expansion-panel-title class="pasos-titulo">
+          <v-icon class="mr-2">mdi-format-list-numbered</v-icon>
+          Pasos a seguir
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <v-list class="pasos-lista">
+            <v-list-item
+              v-for="(paso, index) in pasos"
+              :key="index"
+              class="paso-item"
+            >
+              <template v-slot:prepend>
+                <v-avatar size="24" color="primary" class="paso-numero">
+                  {{ index + 1 }}
+                </v-avatar>
+              </template>
+              <v-list-item-title class="paso-texto">
+                {{ paso }}
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-expansion-panels>
+
+    <v-card-actions class="pa-4">
+      <v-btn
+        color="primary"      
+        variant="elevated"
+        block
+        @click.stop="handleCardClick" 
+      >
+        <v-icon class="mr-2">mdi-play</v-icon>
+        Comenzar
+      </v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
 <script setup>
-defineProps({
-  titulo: String,
-  descripcion: String,
-  pasos: Array,
-  imagen: String,
-});
+const props = defineProps({
+  titulo: {
+    type: String,
+    required: true
+  },
+  descripcion: {
+    type: String,
+    required: true
+  },
+  pasos: { 
+    type: Array,
+    required: true
+  },
+  imagen: {
+    type: String,
+    required: true
+  },
+  categoria: {
+    type: String,
+    default: 'general'
+  },
+  duracion: {
+    type: String,
+    default: '10 min'
+  },
+  completado: {
+    type: Boolean,
+    default: false
+  },
+  mostrarPasos: { 
+    type: Boolean,
+    default: true
+  }
+})
+
+const emit = defineEmits(['click'])
+
+const getCategoriaColor = (categoria) => {
+  const colores = {
+    'basico': 'green',
+    'intermedio': 'orange',
+    'avanzado': 'red',
+    'general': 'blue'
+  }
+  return colores[categoria] || 'blue'
+}
+
+const handleCardClick = () => {
+  emit('click', props)
+}
 </script>
 
-<style>
+<style scoped>
 .ejemplo-card {
-  background-color: #112F3C !important;
-  color: #A9D6E5 !important;
-  border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: #1A2332 !important;
+  border: 1px solid #2D3748;
+  border-radius: 12px !important;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .ejemplo-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 18px 36px rgba(0, 184, 217, 0.4);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 184, 217, 0.3) !important;
 }
 
-.card-title {
-  font-size: 1.6rem;
+.ejemplo-card.completado {
+  border-color: #4CAF50;
+  background: #1A2A1A !important;
+}
+
+.ejemplo-imagen {
+  position: relative;
+  border-radius: 12px 12px 0 0;
+}
+
+.overlay-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(0,0,0,0.4), transparent);
+}
+
+.categoria-chip {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
   font-weight: 600;
-  color: #00B8D9;
-  margin-bottom: 0.5rem;
 }
 
-.card-subtitle {
-  font-size: 1rem;
-  color: #B0D7DE;
-  margin-bottom: 1rem;
-}
-
-.pasos-title {
-  color: #00B8D9;
+.ejemplo-titulo {
+  color: #00B8D9 !important;
   font-weight: 600;
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  padding-bottom: 8px;
 }
 
-.custom-list {
-  padding-left: 1rem;
+.ejemplo-duracion {
+  color: #A0AEC0 !important;
+  font-size: 0.9rem;
 }
 
-.custom-list .v-list-item-title {
-  color: #B0D7DE;
-  line-height: 1.6;
+.ejemplo-descripcion {
+  color: #E2E8F0 !important;
+  line-height: 1.5;
+  padding: 16px;
 }
 
-.list-item {
-  margin-bottom: 0.5rem;
+.pasos-titulo {
+  color: #00B8D9 !important;
+  font-weight: 500;
 }
 
-.v-img {
-  border-radius: 12px;
-  object-fit: cover;
-  margin-top: 1rem;
-  max-height: 200px;
+.pasos-lista {
+  background: transparent !important;
+}
+
+.paso-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #2D3748;
+}
+
+.paso-item:last-child {
+  border-bottom: none;
+}
+
+.paso-numero {
+  background: #00B8D9 !important;
+  color: white !important;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.paso-texto {
+  color: #E2E8F0 !important;
+  font-size: 0.95rem;
 }
 </style>
