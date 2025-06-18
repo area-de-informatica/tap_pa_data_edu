@@ -45,7 +45,7 @@ const items = [
   { title: 'CONTENIDO', value: 'contenido', to: '/contenido' },
   { title: 'EJEMPLOS', value: 'ejemplos', to: '/ejemplos' },
   { title: 'QUIZ', value: 'quiz', to: '/quiz' },
-  { title: 'CRÉDITOS', value: 'about', to: '/about' },
+  { title: 'CREDITOS', value: 'about', to: '/about' },
 ]
 
 const drawer = ref(false)
