@@ -1,4 +1,3 @@
-
 <template>
   <v-container fluid class="full-screen-background pa-6">
     <v-row justify="center" style="max-width: 800px; margin: auto;">
