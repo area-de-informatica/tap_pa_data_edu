@@ -3,7 +3,7 @@
     fluid
     class="full-screen-background d-flex flex-column align-center justify-center"
   >
-    <v-row justify="center" align="center" class="mb-12" style="max-width: 700px;">
+    <v-row justify="center" align="center" class="mb-12" style="max-width: 1200;">
       <v-col cols="12" class="text-center fade-in">
         <h1 class="title">
           Bienvenido al OVA de Búsqueda de Bases de Datos
@@ -23,7 +23,7 @@
       </v-col>
     </v-row>
 
-    <v-row justify="center" class="gap-6" style="max-width: 900px;">
+    <v-row justify="center" class="gap-6" style="max-width: 1200;">
       <v-col cols="12" sm="4" class="fade-in delay-1">
         <v-card class="card-primary pa-6" elevation="10" >
           <h3 class="card-title">Contenido</h3>
@@ -80,6 +80,8 @@
 .full-screen-background {
   background-color: #0D1B2A;
   min-height: 100vh;
+
+
   color: #eee;
   padding: 3rem 1.5rem;
 }
